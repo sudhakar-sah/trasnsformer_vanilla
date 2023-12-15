@@ -18,11 +18,19 @@ class SequenceEmbedding(nn.Module):
         self.dropout = nn.Dropout(p=0.1)
         self.START_TOKEN=START_TOKEN
         self.END_TOKEN=END_TOKEN
+        self.PADDING_TOKEN = PADDING_TOKEN
         self.device = get_device()
     
-    def batch_tokenize(self, batch, start_token=True, end_token=True): 
+    def batch_tokenize(self, batch, start_token, end_token): 
+        """_summary_
+
+        Args:
+            batch (_type_): _description_
+            start_token (_type_): _description_
+            end_token (_type_): _description_
+        """
         
-        def tokenize(sentence, start_token=True, end_token=True):
+        def tokenize(sentence, start_token, end_token):
             sentence_word_indices = [self.language_to_index[token] for token in list(sentence)]
             if start_token: 
                 sentence_word_indices.insert(0, self.language_to_index[self.START_TOKEN])
@@ -41,8 +49,15 @@ class SequenceEmbedding(nn.Module):
         tokenized = torch.stack(tokenized)
         return tokenized.to(self.device)
     
-    def forward(self, x, end_token=True): # sentence 
-        x = self.batch_tokenize(x, end_token)
+    def forward(self, x, start_token, end_token): # sentence 
+        """_summary_
+
+        Args:
+            x (_type_): _description_
+            start_token (_type_): _description_
+            end_token (_type_): _description_
+        """
+        x = self.batch_tokenize(x, start_token, end_token)
         x = self.embedding(x)
         pos = self.position_encoder().to(self.device)
         x = self.dropout(x + pos)

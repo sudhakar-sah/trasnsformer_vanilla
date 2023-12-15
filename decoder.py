@@ -19,17 +19,14 @@ class DecoderLayer(nn.Module):
         self.norm3 = LayerNormalization(parameter_shape=[d_model])
         self.dropout3 = nn.Dropout(p=drop_prob)
         
-    def forward(self, x, y, decoder_mask, _debug =False): 
+    def forward(self, x, y, decoder_mask): 
         y_residue = y 
-        if _debug :
-            print ("Mask Self Attention")
-            print ("-------------------")
-        y = self.self_attention(y, mask=decoder_mask) # 30 x 200 x 512 
+        y = self.self_attention(y, mask=decoder_mask)  
         y = self.dropout1(y)
         y = self.norm1(y + y_residue)
         
         y_residue = y
-        y = self.encoder_decoder_attention(x, y, mask=None) # 30 x 200 x 512 
+        y = self.encoder_decoder_attention(x, y, mask=None) 
         y = self.dropout2(y)
         y = self.norm2(y + y_residue)
         

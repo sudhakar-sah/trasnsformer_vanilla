@@ -6,8 +6,8 @@ class LayerNormalization():
     def __init__(self, parameter_shape, eps=1e-5): 
         self.parameters_shape=parameter_shape
         self.eps=eps # to avoid division by zero
-        self.gamma = nn.Parameter(torch.ones(parameter_shape)) # gamma initiallized as 1 
-        self.beta = nn.Parameter(torch.zeros(parameter_shape)) # beta initialized as zero 
+        self.gamma = nn.Parameter(torch.ones(parameter_shape)) # gamma initiallized to 1 
+        self.beta = nn.Parameter(torch.zeros(parameter_shape)) # beta initialized to zero 
         
     def forward(self, inputs): 
         dims = [-(i+1) for i in range(len(self.parameters_shape))]

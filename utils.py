@@ -21,16 +21,16 @@ def scaled_dot_product(q,k,v, mask=None):
 class PositionWiseFeedForward(nn.Module): 
     def __init__(self, d_model, hidden, drop_prob=0.1):
         super(PositionWiseFeedForward, self).__init__()
-        self.linear1 = nn.Linear(d_model, hidden) # 512 -> 2048 
-        self.linear2 = nn.Linear(hidden, d_model) # 2048 -> 512
+        self.linear1 = nn.Linear(d_model, hidden) 
+        self.linear2 = nn.Linear(hidden, d_model) 
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(p=drop_prob)
         
-    def forward(self, x): # 30 x 200 x 512 
-        x = self.linear1(x) # 30 x 200 x 2048 
-        x = self.relu(x) # 30 x 200 x 2048 
-        x = self.dropout(x) # 30 x 200 x 2048  
-        x = self.linear2(x) # 30 x 200 x 512  
+    def forward(self, x): 
+        x = self.linear1(x) 
+        x = self.relu(x) 
+        x = self.dropout(x) 
+        x = self.linear2(x)   
         return x 
     
 

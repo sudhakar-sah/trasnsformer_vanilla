@@ -23,14 +23,14 @@ class EncoderLayer(nn.Module):
         self.dropout2= nn.Dropout(p=drop_prob)
         
     def forward(self, x): 
-        residual_x = x # 20 x 200 x 512 
-        x = self.attention(x, mask=None) # 30 x 200 x 512  
-        x = self.dropout1(x) # 30 x 200 x 512  
-        x = self.norm1(x + residual_x) # 30 x 200 x 512  
-        residual_x = x  # 30 x 200 x 512  
-        x - self.ffn(x) # 30 x 200 x 512  
-        x - self.dropout2(x) # 30 x 200 x 512  
-        x = self.norm2(x + residual_x) # 30 x 200 x 512  
+        residual_x = x 
+        x = self.attention(x, mask=None) 
+        x = self.dropout1(x) 
+        x = self.norm1(x + residual_x) 
+        residual_x = x    
+        x - self.ffn(x) 
+        x - self.dropout2(x) 
+        x = self.norm2(x + residual_x) 
         return x
     
 class SequentialEncoder(nn.Sequential): 

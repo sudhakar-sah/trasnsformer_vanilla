@@ -4,6 +4,11 @@ from torch import nn
 from utils import scaled_dot_product
 
 class MultiHeadCrossAttention(nn.Module): 
+    """_summary_
+
+    Args:
+        nn (_type_): _description_
+    """
     
     def __init__(self, d_model=None, num_heads=None): 
         super().__init__()
@@ -16,19 +21,18 @@ class MultiHeadCrossAttention(nn.Module):
         
         
     def forward(self, x, y, mask=None): 
-        batch_size, sequence_length, input_dim = x.size() # 30 x 200 x 512 
-        kv=self.kv_layer(x) # 30 x 200 x 1024
-        q = self.q_layer(y) # 30 x 200 x 512 
-        kv=kv.reshape(batch_size, sequence_length, self.num_heads, 2 * self.head_dim) # 30 x 200 x 8 x 128
-        q = q.reshape(batch_size, sequence_length, self.num_heads, self.head_dim) # 30 x 200 x 8 x 64 
-        kv = kv.permute(0,2,1,3)  # 30 x 8 x 200 x 128 
-        q = q.permute(0,2,1,3) # 30 x 8 x 200 x 64 
-        k,v = kv.chunk(2, dim=-1) # K : 30 x 8 x 200 x 64 , v : same        
+        batch_size, sequence_length, input_dim = x.size() 
+        kv=self.kv_layer(x) 
+        q = self.q_layer(y) 
+        kv=kv.reshape(batch_size, sequence_length, self.num_heads, 2 * self.head_dim) 
+        q = q.reshape(batch_size, sequence_length, self.num_heads, self.head_dim) 
+        kv = kv.permute(0,2,1,3)  
+        q = q.permute(0,2,1,3) 
+        k,v = kv.chunk(2, dim=-1)       
 
-        values, attention = scaled_dot_product(q,k,v, mask)  # 30 x 8 x 200 x 64 
-        # attention 
-        values = values.reshape(batch_size, sequence_length, self.num_heads*self.head_dim) # 30 x 200 x 512 
-        out = self.linear_layer(values) # 30 x 200 x 512 
+        values, attention = scaled_dot_product(q,k,v, mask) 
+        values = values.reshape(batch_size, sequence_length, self.num_heads*self.head_dim) 
+        out = self.linear_layer(values) 
         return out
     
     
