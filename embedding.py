@@ -8,7 +8,7 @@ class SequenceEmbedding(nn.Module):
     Args:
         nn (_type_): _description_
     """
-    def __inii__(self, max_sequence_length, d_model, language_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN): 
+    def __init__(self, max_sequence_length, d_model, language_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN): 
         super().__init__()
         self.vocab_size = len(language_to_index)
         self.max_sequence_length = max_sequence_length
