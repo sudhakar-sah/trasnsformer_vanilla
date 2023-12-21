@@ -3,30 +3,30 @@ import torch.nn as nn
 from layer_norm import LayerNormalization
 from attention import MultiHeadAttention, MultiHeadCrossAttention
 from utils import PositionWiseFeedForward
-from embedding import SequenceEmbedding
+from embedding import SentenceEmbedding
 
 class DecoderLayer(nn.Module):
     
     def __init__(self, d_model, ffn_hidden, num_heads, drop_prob): 
         super(DecoderLayer, self).__init__()
         self.self_attention = MultiHeadAttention(d_model=d_model, num_heads=num_heads)
-        self.norm1 = LayerNormalization(parameter_shape=[d_model])
+        self.norm1 = LayerNormalization(parameters_shape=[d_model])
         self.dropout1 = nn.Dropout(p=drop_prob)
         self.encoder_decoder_attention= MultiHeadCrossAttention(d_model=d_model, num_heads=num_heads)
-        self.norm2 = LayerNormalization(parameter_shape=[d_model])
+        self.norm2 = LayerNormalization(parameters_shape=[d_model])
         self.dropout2 = nn.Dropout(p=drop_prob)
         self.ffn = PositionWiseFeedForward(d_model=d_model, hidden=ffn_hidden, drop_prob=drop_prob)
-        self.norm3 = LayerNormalization(parameter_shape=[d_model])
+        self.norm3 = LayerNormalization(parameters_shape=[d_model])
         self.dropout3 = nn.Dropout(p=drop_prob)
         
-    def forward(self, x, y, decoder_mask): 
+    def forward(self, x, y, self_attention_mask, cross_attention_mask): 
         y_residue = y 
-        y = self.self_attention(y, mask=decoder_mask)  
+        y = self.self_attention(y, mask=self_attention_mask)  
         y = self.dropout1(y)
         y = self.norm1(y + y_residue)
         
         y_residue = y
-        y = self.encoder_decoder_attention(x, y, mask=None) 
+        y = self.encoder_decoder_attention(x, y, mask=cross_attention_mask) 
         y = self.dropout2(y)
         y = self.norm2(y + y_residue)
         
@@ -56,7 +56,7 @@ class Decoder(nn.Module):
                  END_TOKEN, 
                  PADDING_TOKEN): 
         super().__init__()
-        self.sentence_embedding = SequenceEmbedding(max_sequence_length, d_model, language_to_index, START_TOKEN,END_TOKEN,PADDING_TOKEN)
+        self.sentence_embedding = SentenceEmbedding(max_sequence_length, d_model, language_to_index, START_TOKEN,END_TOKEN,PADDING_TOKEN)
         self.layers = SequentialDecoder(*[DecoderLayer(d_model, ffn_hidden, num_heads, drop_prob) 
                                           for _ in range(num_layers)])
         

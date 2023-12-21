@@ -2,7 +2,7 @@ import torch
 from torch import nn 
 from utils import PositionalEncoding, get_device
 
-class SequenceEmbedding(nn.Module): 
+class SentenceEmbedding(nn.Module): 
     """creates embedding for a given sentence 
 
     Args:
@@ -12,7 +12,7 @@ class SequenceEmbedding(nn.Module):
         super().__init__()
         self.vocab_size = len(language_to_index)
         self.max_sequence_length = max_sequence_length
-        self.embeddding = nn.Embedding(self.vocab_size, d_model)
+        self.embedding = nn.Embedding(self.vocab_size, d_model)
         self.language_to_index = language_to_index
         self.position_encoder = PositionalEncoding(d_model, max_sequence_length)
         self.dropout = nn.Dropout(p=0.1)
@@ -61,3 +61,4 @@ class SequenceEmbedding(nn.Module):
         x = self.embedding(x)
         pos = self.position_encoder().to(self.device)
         x = self.dropout(x + pos)
+        return x

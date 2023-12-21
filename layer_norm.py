@@ -1,13 +1,15 @@
 
 import torch 
-from torch.nn import nn 
+import torch.nn as nn 
 
-class LayerNormalization(): 
-    def __init__(self, parameter_shape, eps=1e-5): 
-        self.parameters_shape=parameter_shape
+class LayerNormalization(nn.Module): 
+    
+    def __init__(self, parameters_shape, eps=1e-5): 
+        super().__init__()
+        self.parameters_shape=parameters_shape
         self.eps=eps # to avoid division by zero
-        self.gamma = nn.Parameter(torch.ones(parameter_shape)) # gamma initiallized to 1 
-        self.beta = nn.Parameter(torch.zeros(parameter_shape)) # beta initialized to zero 
+        self.gamma = nn.Parameter(torch.ones(parameters_shape)) # gamma initiallized to 1 
+        self.beta = nn.Parameter(torch.zeros(parameters_shape)) # beta initialized to zero 
         
     def forward(self, inputs): 
         dims = [-(i+1) for i in range(len(self.parameters_shape))]

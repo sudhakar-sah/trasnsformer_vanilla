@@ -1,4 +1,5 @@
 import torch 
+import math
 import torch.nn as nn 
 import torch.nn.functional as F 
 
@@ -10,9 +11,12 @@ def get_device():
 
 def scaled_dot_product(q,k,v, mask=None): 
     d_k = q.size()[-1]
-    scaled = torch.matmul(q,k.transpose(-2,-1))/math.sqrt(d_k)
+    scaled = torch.matmul(q,k.transpose(-1,-2))/math.sqrt(d_k)
+
     if mask is not None : 
-        scaled += mask 
+        scaled = scaled.permute(1,0,2,3) + mask
+        scaled = scaled.permute(1,0,2,3) 
+
     attention= F.softmax(scaled, dim=-1)
     values = torch.matmul(attention , v)
     return values, attention 
